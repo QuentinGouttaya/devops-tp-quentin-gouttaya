@@ -11,7 +11,7 @@ use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 
 #[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
-struct Task {
+pub struct Task {
     id: i64,
     title: String,
     description: Option<String>,
@@ -20,14 +20,14 @@ struct Task {
 }
 
 #[derive(Deserialize)]
-struct CreateTask {
+pub struct CreateTask {
     title: String,
     description: Option<String>,
     task_type: String,
 }
 
 #[derive(Deserialize)]
-struct UpdateTask {
+pub struct UpdateTask {
     title: Option<String>,
     description: Option<String>,
     task_type: Option<String>,
@@ -35,7 +35,7 @@ struct UpdateTask {
 }
 
 #[derive(Clone)]
-struct AppState {
+pub struct AppState {
     db: SqlitePool,
 }
 
@@ -62,7 +62,7 @@ async fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-async fn list_tasks(State(state): State<Arc<AppState>>) -> impl IntoResponse {
+pub async fn list_tasks(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     let tasks = sqlx::query_as::<_, Task>("SELECT * FROM tasks")
         .fetch_all(&state.db)
         .await
@@ -70,7 +70,7 @@ async fn list_tasks(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     Json(tasks)
 }
 
-async fn get_task(
+pub async fn get_task(
     State(state): State<Arc<AppState>>,
     Path(id): Path<i64>,
 ) -> Result<Json<Task>, StatusCode> {
@@ -84,7 +84,7 @@ async fn get_task(
     Ok(Json(task))
 }
 
-async fn create_task(
+pub async fn create_task(
     State(state): State<Arc<AppState>>,
     Json(payload): Json<CreateTask>,
 ) -> impl IntoResponse {
@@ -127,7 +127,7 @@ async fn create_task(
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR.into_response(),
     }
 }
-async fn update_task(
+pub async fn update_task(
     State(state): State<Arc<AppState>>,
     Path(id): Path<i64>,
     Json(payload): Json<UpdateTask>,
@@ -183,7 +183,7 @@ async fn update_task(
 }
 ///Testing helper functions => to be split
 /// Valide qu'un titre de tâche n'est pas vide
-fn validate_title(title: &str) -> Result<(), String> {
+pub fn validate_title(title: &str) -> Result<(), String> {
     if title.trim().is_empty() {
         Err("Title cannot be empty".to_string())
     } else {
@@ -191,7 +191,7 @@ fn validate_title(title: &str) -> Result<(), String> {
     }
 }
 
-async fn delete_task(State(state): State<Arc<AppState>>, Path(id): Path<i64>) -> StatusCode {
+pub async fn delete_task(State(state): State<Arc<AppState>>, Path(id): Path<i64>) -> StatusCode {
     sqlx::query("DELETE FROM tasks WHERE id = ?")
         .bind(id)
         .execute(&state.db)
@@ -202,12 +202,12 @@ async fn delete_task(State(state): State<Arc<AppState>>, Path(id): Path<i64>) ->
 }
 
 /// Normalise le type de tâche en lowercase
-fn normalize_task_type(task_type: &str) -> String {
+pub fn normalize_task_type(task_type: &str) -> String {
     task_type.to_lowercase().trim().to_string()
 }
 
 /// Détecte si le titre est trop court (moins de 3 caractères)
-fn is_title_too_short(title: &str) -> bool {
+pub fn is_title_too_short(title: &str) -> bool {
     title.trim().len() < 3
 }
 

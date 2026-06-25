@@ -1448,7 +1448,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "task-manager-backend"
+name = "task_manager_backend"
 version = "0.1.0"
 dependencies = [
  "anyhow",
