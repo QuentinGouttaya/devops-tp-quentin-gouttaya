@@ -1,5 +1,5 @@
 [package]
-name = "task-manager-backend"
+name = "task_manager_backend"
 version = "0.1.0"
 edition = "2024"              # édition 2024 stable avec Rust 1.85
 
