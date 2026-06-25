@@ -279,3 +279,194 @@ mod unit_tests {
         assert!(!is_too_short);
     }
 }
+#[cfg(test)]
+mod integration_tests {
+    use super::*;
+    use axum::extract::{Path, State};
+    use axum::http::StatusCode;
+    use axum::response::IntoResponse;
+    use sqlx::SqlitePool;
+    use std::sync::Arc;
+
+    async fn setup_test_db() -> Arc<AppState> {
+        let db = SqlitePool::connect("sqlite::memory:")
+            .await
+            .expect("Failed to create in-memory DB");
+
+        sqlx::query(include_str!("../migrations/001_create_tasks.sql"))
+            .execute(&db)
+            .await
+            .expect("Failed to run migrations");
+
+        Arc::new(AppState { db })
+    }
+
+    #[tokio::test]
+    async fn should_list_tasks_when_empty() {
+        // ARRANGE
+        let state = setup_test_db().await;
+
+        // ACT
+        let response = list_tasks(State(state)).await.into_response();
+
+        // ASSERT
+        assert_eq!(response.status(), StatusCode::OK);
+    }
+
+    #[tokio::test]
+    async fn should_create_task_when_valid_payload() {
+        // ARRANGE
+        let state = setup_test_db().await;
+        let payload = CreateTask {
+            title: "Test task".to_string(),
+            description: Some("Description".to_string()),
+            task_type: "feature".to_string(),
+        };
+
+        // ACT
+        let response = create_task(State(state), Json(payload))
+            .await
+            .into_response();
+
+        // ASSERT
+        assert_eq!(response.status(), StatusCode::CREATED);
+    }
+
+    #[tokio::test]
+    async fn should_reject_empty_title_when_creating_task() {
+        // ARRANGE
+        let state = setup_test_db().await;
+        let payload = CreateTask {
+            title: "".to_string(),
+            description: None,
+            task_type: "bug".to_string(),
+        };
+
+        // ACT
+        let response = create_task(State(state), Json(payload))
+            .await
+            .into_response();
+
+        // ASSERT
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+    }
+
+    #[tokio::test]
+    async fn should_get_task_when_exists() {
+        // ARRANGE
+        let state = setup_test_db().await;
+
+        let payload = CreateTask {
+            title: "Test".to_string(),
+            description: None,
+            task_type: "chore".to_string(),
+        };
+        create_task(State(state.clone()), Json(payload)).await;
+
+        // ACT
+        let result = get_task(State(state), Path(1)).await;
+
+        // ASSERT
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_return_not_found_when_task_doesnt_exist() {
+        // ARRANGE
+        let state = setup_test_db().await;
+
+        // ACT
+        let result = get_task(State(state), Path(999)).await;
+
+        // ASSERT
+        assert_eq!(result.unwrap_err(), StatusCode::NOT_FOUND);
+    }
+
+    #[tokio::test]
+    async fn should_update_task_when_exists() {
+        // ARRANGE
+        let state = setup_test_db().await;
+
+        let payload = CreateTask {
+            title: "Old title".to_string(),
+            description: None,
+            task_type: "bug".to_string(),
+        };
+        create_task(State(state.clone()), Json(payload)).await;
+
+        let update_payload = UpdateTask {
+            title: Some("New title".to_string()),
+            description: None,
+            task_type: None,
+            completed: Some(true),
+        };
+
+        // ACT
+        let result = update_task(State(state), Path(1), Json(update_payload)).await;
+
+        // ASSERT
+        assert!(result.is_ok());
+        let updated = result.unwrap().0;
+        assert_eq!(updated.title, "New title");
+        assert!(updated.completed);
+    }
+
+    #[tokio::test]
+    async fn should_delete_task_when_exists() {
+        // ARRANGE
+        let state = setup_test_db().await;
+
+        let payload = CreateTask {
+            title: "To delete".to_string(),
+            description: None,
+            task_type: "chore".to_string(),
+        };
+        create_task(State(state.clone()), Json(payload)).await;
+
+        // ACT
+        let status = delete_task(State(state), Path(1)).await;
+
+        // ASSERT
+        assert_eq!(status, StatusCode::NO_CONTENT);
+    }
+
+    #[tokio::test]
+    async fn should_create_and_retrieve_task_with_mocked_db() {
+        // ARRANGE - Mock de la DB avec sqlite::memory:
+        let db = SqlitePool::connect("sqlite::memory:")
+            .await
+            .expect("Failed to create in-memory DB");
+
+        // Initialiser le schéma
+        sqlx::query(include_str!("../migrations/001_create_tasks.sql"))
+            .execute(&db)
+            .await
+            .expect("Failed to run migrations");
+
+        let state = Arc::new(AppState { db });
+
+        // Créer une tâche via le handler (simule un appel API)
+        let payload = CreateTask {
+            title: "Test task".to_string(),
+            description: Some("Description".to_string()),
+            task_type: "feature".to_string(),
+        };
+
+        // ACT - Appeler create_task (pas d'appel réseau, tout en mémoire)
+        let create_response = create_task(State(state.clone()), Json(payload))
+            .await
+            .into_response();
+
+        assert_eq!(create_response.status(), StatusCode::CREATED);
+
+        // Récupérer la tâche créée
+        let get_response = get_task(State(state), Path(1))
+            .await
+            .expect("Failed to get task");
+
+        // ASSERT
+        assert_eq!(get_response.title, "Test task");
+        assert_eq!(get_response.task_type, "feature");
+        assert!(!get_response.completed);
+    }
+}
