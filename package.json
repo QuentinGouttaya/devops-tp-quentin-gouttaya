@@ -9,12 +9,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "lint:frontend": "cd frontend && npm run lint -- --fix",
+    "format:frontend": "cd frontend && npm run format"
   },
   "lint-staged": {
     "frontend/**/*.{svelte,js,ts}": [
-      "cd frontend && npm run lint -- --fix",
-      "cd frontend && npm run format"
+      "npm run lint:frontend",
+      "npm run format:frontend"
     ]
   },
   "repository": {
