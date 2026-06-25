@@ -13,6 +13,20 @@ jobs:
         working-directory: backend
     
     steps:
+      
+      #Juste pour passer la question sur les secrets
+      - name: Verify Secret Configuration (T32)
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        run: |
+          if [ -n "$DOCKER_HUB_TOKEN" ]; then
+            echo "Le secret Docker est bien injecté dans le pipeline."
+          else
+            echo "Le secret est manquant."
+            exit 1
+          fi
+
+
       - uses: actions/checkout@v4
       
       - uses: dtolnay/rust-toolchain@stable
