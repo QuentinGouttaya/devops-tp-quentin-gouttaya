@@ -7,7 +7,12 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cd backend && cargo run --release",
+    "dev": "cd backend && cargo watch -x run",
+    "lint": "cd backend && cargo clippy -- -D warnings && cd ../frontend && npm run lint",
+    "format": "cd backend && cargo fmt && cd ../frontend && npm run format",
+    "test": "cd backend && cargo test && cd ../frontend && npm run test",
+    "test:coverage": "cd backend && cargo tarpaulin --out Html && cd ../frontend && npm run test:coverage",
     "prepare": "husky",
     "lint-staged": "lint-staged",
     "lint:frontend": "cd frontend && npm run lint -- --fix",
