@@ -23,6 +23,27 @@ jobs:
         with:
           workspaces: backend
       
+      #Sépare les deps de l'app pour le testing pendant la compilation
+      - name: Install cargo-chef
+        run: cargo install cargo-chef --locked
+
+      - name: Cache cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            backend/target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Prepare recipe
+        run: cargo chef prepare --recipe-path recipe.json
+
+      - name: Cook dependencies
+        run: cargo chef cook --release --recipe-path recipe.json
+      
       - run: cargo install cargo-tarpaulin --locked
       
       - run: cargo fmt --check
