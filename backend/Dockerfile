@@ -1,6 +1,4 @@
-# ---------------------------------------------------
-# Étape 1 : Builder
-# ---------------------------------------------------
+
 FROM rust:1.96.0-alpine3.24 AS builder
 
 WORKDIR /app
@@ -17,9 +15,6 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
 # On prépare le dossier /data pour qu'il appartienne à l'utilisateur non-root de distroless
 RUN mkdir -p /app/data && chown -R 65532:65532 /app/data
 
-# ---------------------------------------------------
-# Étape 2 : Runtime Distroless (Sécurisé) PAS DE SHELL ni PACKAGE MANAGER
-# ---------------------------------------------------
 # L'image `cc` contient le strict minimum pour les binaires C dynamiques
 FROM gcr.io/distroless/cc-debian13:nonroot
 
@@ -38,3 +33,15 @@ EXPOSE 3000
 USER nonroot
 
 CMD ["/app/server"]
+FROM rust:1.96.0-alpine3.24 AS builder
+WORKDIR /app
+COPY . .
+RUN cargo build --release
+
+FROM debian:bullseye-slim
+WORKDIR /app
+COPY --from=builder /app/target/release/task-manager-backend /app/server
+COPY --from=builder /app/migrations /app/migrations
+RUN mkdir -p /data
+EXPOSE 3000
+CMD ["./server"]
