@@ -1,0 +1,20 @@
+# Secrets
+.env
+.env.local
+*.key
+
+# Dependances
+node_modules/
+vendor/
+
+# Build
+dist/
+build/
+coverag/
+#RUST
+target/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
