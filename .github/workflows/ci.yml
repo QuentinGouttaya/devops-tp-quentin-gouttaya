@@ -16,6 +16,7 @@ jobs:
       
       #Juste pour passer la question sur les secrets
       - name: Verify Secret Configuration (T32)
+        working-directory: . #Juste pour le check du secret
         env:
           DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         run: |
