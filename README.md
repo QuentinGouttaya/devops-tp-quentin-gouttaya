@@ -1,4 +1,3 @@
-
 # Task Manager DevOps
 
 ![CI](https://github.com/QuentinGouttaya/devops-tp-quentin-gouttaya/actions/workflows/ci.yml/badge.svg)
