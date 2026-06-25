@@ -18,7 +18,7 @@ jobs:
       - name: Verify Secret Configuration (T32)
         working-directory: . #Juste pour le check du secret
         env:
-          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
         run: |
           if [ -n "$DOCKER_HUB_TOKEN" ]; then
             echo "Le secret Docker est bien injecté dans le pipeline."
