@@ -1,0 +1,16 @@
+[package]
+name = "task-manager-backend"
+version = "0.1.0"
+edition = "2024"              # édition 2024 stable avec Rust 1.85
+
+[dependencies]
+axum = { version = "0.8.9", features = ["json"] }
+tokio = { version = "1.52.3", features = ["full"] }
+serde = { version = "1.0.228", features = ["derive"] }
+sqlx = { version = "0.9.0", features = [
+  "runtime-tokio",
+  "tls-native-tls",
+  "sqlite",
+] }
+tower-http = { version = "0.7.0", features = ["cors"] }
+anyhow = "1.0.102"
