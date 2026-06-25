@@ -19,44 +19,37 @@ jobs:
         with:
           components: clippy, rustfmt
       
+      # Gère automatiquement et parfaitement le cache Cargo (registry + target)
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: backend
+          
+      # Installe tarpaulin via un binaire pré-compilé (prend 1 seconde vs 3 minutes)
+      - name: Install cargo-tarpaulin
+        uses: taiki-e/install-action@cargo-tarpaulin
+
+      - name: Check Formatting
+        run: cargo fmt -- --check
       
-
-      #Sépare les deps de l'app pour le testing pendant la compilation
-      - name: Install cargo-chef
-        run: cargo install cargo-chef --locked
-
-      - name: Cache cargo dependencies
-        uses: actions/cache@v4
+      - name: Lint with Clippy
+        run: cargo clippy -- -D warnings
+      
+      - name: Run Tests
+        run: cargo test
+      
+      - name: Code Coverage
+        run: cargo tarpaulin --out Html
+      
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
         with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            backend/target/
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Prepare recipe
-        run: cargo chef prepare --recipe-path recipe.json
-
-      - name: Cook dependencies
-        run: cargo chef cook --release --recipe-path recipe.json
+          name: rust-coverage-report
+          path: backend/tarpaulin-report.html
+          retention-days: 14 # Optionnel : limite la durée de rétention pour économiser l'espace
+          if-no-files-found: error
       
-
-      - run: cargo install cargo-tarpaulin --locked
-      
-      - run: cargo fmt
-      
-      - run: cargo clippy -- -D warnings
-      
-      - run: cargo test
-      
-      - run: cargo tarpaulin --out Html
-      
-      - run: cargo build --release
+      - name: Build Release
+        run: cargo build --release
 
   frontend:
     runs-on: ubuntu-latest

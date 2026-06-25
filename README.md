@@ -1,6 +1,7 @@
-![CI](https://github.com/QuentinGouttaya/devops-tp-quentin-gouttaya/actions/workflows/ci.yml/badge.svg)
-
 # Task Manager DevOps
+
+![CI](https://github.com/QuentinGouttaya/devops-tp-quentin-gouttaya/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/USER/REPO/actions/workflows/ci.yml/badge.svg)
 
 Un gestionnaire de tâches CRUD simple et fortement typé, conçu pour valider une pipeline CI/CD et des déploiements conteneurisés.
 
