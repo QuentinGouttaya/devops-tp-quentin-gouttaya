@@ -10,6 +10,7 @@ C'est le point d'entrée principal de l'application. Sans création de tâche, l
 **Tests identifiés :**
 
 #### Test unitaire : validation du payload
+
 - **Fichier** : `backend/src/main.rs` (module `tests`)
 - **Nom** : `should_reject_empty_title`
 - **Description** : Vérifie qu'une tâche avec un titre vide est rejetée
@@ -19,6 +20,7 @@ C'est le point d'entrée principal de l'application. Sans création de tâche, l
   - ASSERT : Retourne une erreur de validation
 
 #### Test d'intégration : création complète
+
 - **Fichier** : `backend/tests/integration_tests.rs`
 - **Nom** : `should_create_task_and_return_201`
 - **Description** : Vérifie qu'un POST valide crée la tâche en base et retourne 201
@@ -29,6 +31,7 @@ C'est le point d'entrée principal de l'application. Sans création de tâche, l
   - ASSERT : Status 201 + tâche retournée avec ID généré
 
 #### Test bonus (e2e) : création via l'API
+
 - **Fichier** : `backend/tests/e2e_tests.rs`
 - **Nom** : `should_create_task_via_http`
 - **Description** : Test HTTP complet avec serveur Axum réel
@@ -48,6 +51,7 @@ C'est la base de la consultation. Si cette fonctionnalité casse, l'utilisateur 
 **Tests identifiés :**
 
 #### Test unitaire : gestion du cas "non trouvé"
+
 - **Fichier** : `backend/src/main.rs` (module `tests`)
 - **Nom** : `should_return_not_found_for_invalid_id`
 - **Description** : Vérifie qu'un ID inexistant retourne 404
@@ -57,6 +61,7 @@ C'est la base de la consultation. Si cette fonctionnalité casse, l'utilisateur 
   - ASSERT : Retourne `Err(StatusCode::NOT_FOUND)`
 
 #### Test d'intégration : récupération réussie
+
 - **Fichier** : `backend/tests/integration_tests.rs`
 - **Nom** : `should_return_task_when_exists`
 - **Description** : Crée une tâche puis la récupère par son ID
@@ -67,6 +72,7 @@ C'est la base de la consultation. Si cette fonctionnalité casse, l'utilisateur 
   - ASSERT : Status 200 + tâche complète retournée
 
 #### Test bonus (e2e) : récupération via HTTP
+
 - **Fichier** : `backend/tests/e2e_tests.rs`
 - **Nom** : `should_get_task_via_http`
 - **Description** : Test HTTP complet GET /tasks/1
@@ -86,6 +92,7 @@ C'est la fonctionnalité la plus complexe car elle gère des champs optionnels (
 **Tests identifiés :**
 
 #### Test unitaire : fusion des champs optionnels
+
 - **Fichier** : `backend/src/main.rs` (module `tests`)
 - **Nom** : `should_merge_optional_fields_correctly`
 - **Description** : Vérifie que seuls les champs fournis sont mis à jour
@@ -95,6 +102,7 @@ C'est la fonctionnalité la plus complexe car elle gère des champs optionnels (
   - ASSERT : `title` changé, `description` et `task_type` inchangés
 
 #### Test d'intégration : mise à jour partielle
+
 - **Fichier** : `backend/tests/integration_tests.rs`
 - **Nom** : `should_update_only_provided_fields`
 - **Description** : Met à jour uniquement le titre, vérifie que le reste est intact
@@ -105,6 +113,7 @@ C'est la fonctionnalité la plus complexe car elle gère des champs optionnels (
   - ASSERT : title="New", description="Desc" (inchangé)
 
 #### Test bonus (e2e) : mise à jour via HTTP
+
 - **Fichier** : `backend/tests/e2e_tests.rs`
 - **Nom** : `should_update_task_via_http`
 - **Description** : Test HTTP complet PUT /tasks/1
@@ -116,13 +125,23 @@ C'est la fonctionnalité la plus complexe car elle gère des champs optionnels (
 
 ---
 
-## Couverture cible
+## Couverture de code
 
-- **Backend** : 60% minimum (lignes couvertes par `cargo tarpaulin`)
-- **Frontend** : 50% minimum (composants Svelte testés avec Vitest)
+### Backend (Rust)
 
-## Outils utilisés
+- **Outil** : `cargo-tarpaulin`
+- **Couverture actuelle** : XX% (voir rapport `backend/tarpaulin-report.html`)
+- **Tests d'intégration** : 7 tests couvrant tous les handlers CRUD
+- **Mock utilisé** : SQLite en mémoire (`sqlite::memory:`)
 
-- **Backend** : `cargo test` (natif) + `cargo-tarpaulin` (couverture)
-- **Frontend** : `vitest` + `@vitest/coverage-v8`
-- **Mock** : SQLite en mémoire (`sqlite::memory:`) pour isoler les tests
+### Frontend (Svelte)
+
+- **Outil** : Vitest + @vitest/coverage-v8
+- **Couverture actuelle** : XX%
+- **Tests** : Sanity checks
+
+### Améliorations futures
+
+- Ajouter des tests e2e avec Playwright
+- Tester les cas limites (titres très longs, caractères spéciaux)
+- Couvrir les erreurs de base de données
