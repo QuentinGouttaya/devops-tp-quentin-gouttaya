@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    task_type TEXT NOT NULL DEFAULT 'chore',
+    completed BOOLEAN NOT NULL DEFAULT 0
+);
