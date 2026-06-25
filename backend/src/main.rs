@@ -3,7 +3,7 @@ use axum::{
     extract::{Path, State},
     http::StatusCode,
     response::IntoResponse,
-    routing::{delete, get, post, put},
+    routing::get,
 };
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
@@ -74,11 +74,14 @@ async fn get_task(
     State(state): State<Arc<AppState>>,
     Path(id): Path<i64>,
 ) -> Result<Json<Task>, StatusCode> {
-    sqlx::query_as::<_, Task>("SELECT * FROM tasks WHERE id = ?")
+    let task = sqlx::query_as::<_, Task>("SELECT * FROM tasks WHERE id = ?")
         .bind(id)
         .fetch_optional(&state.db)
         .await
-        .map_or(Err(StatusCode::NOT_FOUND), |t| Ok(Json(t)))
+        .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?
+        .ok_or(StatusCode::NOT_FOUND)?;
+
+    Ok(Json(task))
 }
 
 async fn create_task(

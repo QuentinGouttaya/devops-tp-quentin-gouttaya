@@ -1,0 +1,36 @@
+{
+  "name": "devops-tp-quentin-gouttaya",
+  "version": "1.0.0",
+  "description": "Un gestionnaire de tâches CRUD simple et fortement typé, conçu pour valider une pipeline CI/CD et des déploiements conteneurisés.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "frontend/**/*.{svelte,js,ts}": [
+      "cd frontend && npm run lint -- --fix",
+      "cd frontend && npm run format"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QuentinGouttaya/devops-tp-quentin-gouttaya.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/QuentinGouttaya/devops-tp-quentin-gouttaya/issues"
+  },
+  "homepage": "https://github.com/QuentinGouttaya/devops-tp-quentin-gouttaya#readme",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8"
+  }
+}
