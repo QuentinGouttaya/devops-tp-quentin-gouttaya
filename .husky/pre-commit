@@ -1,0 +1,3 @@
+npm run lint-staged
+cargo fmt --manifest-path=backend/Cargo.toml --check
+cargo clippy --manifest-path=backend/Cargo.toml -- -D warnings
