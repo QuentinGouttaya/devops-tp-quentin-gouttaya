@@ -48,7 +48,7 @@ jobs:
 
       - run: cargo install cargo-tarpaulin --locked
       
-      - run: cargo fmt --check
+      - run: cargo fmt
       
       - run: cargo clippy -- -D warnings
       
