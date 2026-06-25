@@ -13,26 +13,35 @@ Un gestionnaire de tâches CRUD simple et fortement typé, conçu pour valider u
 - **Frontend :** Svelte 5 (SPA)
 - **Déploiement :** Docker & Docker Compose
 
-## Lancer le projet
+## 🚀 Lancer le projet
 
-**Via Docker (Recommandé) :**
+### Pré-requis
+
+Assurez-vous d'avoir installé les outils suivants sur votre machine locale :
+
+- **Docker** et **Docker Compose plugin** (via Docker Desktop ou Docker Engine)
+- **Git** (pour cloner le dépôt)
+*(Node.js et Rust ne sont pas nécessaires grâce à l'isolation Docker)*
+
+### Déploiement
+
+Lancez l'intégralité de la stack (Frontend, Backend, Base de données) en 4 commandes :
 
 ```bash
-docker-compose up -d --build
+git clone <URL_DE_VOTRE_DEPOT>
+cd devops-tp-quentin-gouttaya
+cp .env.example .env
+docker compose up -d --build
 ```
 
-**En local (Développement) :**
+*Note : N'oubliez pas d'éditer le fichier `.env` si des variables spécifiques sont requises par votre application.*
 
-```bash
-# Terminal 1 : Lancer le backend Rust
-cd backend
-cargo run
+### Accès aux services
 
-# Terminal 2 : Lancer le frontend Svelte 5
-cd frontend
-npm install
-npm run dev
-```
+Une fois les conteneurs démarrés, l'application est accessible via :
+
+- 🌐 **Frontend (Svelte/NGINX)** : [http://localhost](http://localhost)
+- ⚙️ **Backend (Rust/Axum)** : [http://localhost:3000](http://localhost:3000)
 
 ## Tester
 
