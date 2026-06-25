@@ -23,6 +23,7 @@ jobs:
         with:
           workspaces: backend
       
+
       #Sépare les deps de l'app pour le testing pendant la compilation
       - name: Install cargo-chef
         run: cargo install cargo-chef --locked
@@ -44,6 +45,7 @@ jobs:
       - name: Cook dependencies
         run: cargo chef cook --release --recipe-path recipe.json
       
+
       - run: cargo install cargo-tarpaulin --locked
       
       - run: cargo fmt --check
