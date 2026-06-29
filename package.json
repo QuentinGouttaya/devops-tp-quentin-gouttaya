@@ -1,0 +1,43 @@
+{
+  "name": "devops-tp-quentin-gouttaya",
+  "version": "1.0.0",
+  "description": "Un gestionnaire de tâches CRUD simple et fortement typé, conçu pour valider une pipeline CI/CD et des déploiements conteneurisés.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "cd backend && cargo run --release",
+    "dev": "cd backend && cargo watch -x run",
+    "lint": "cd backend && cargo clippy -- -D warnings && cd ../frontend && npm run lint",
+    "format": "cd backend && cargo fmt && cd ../frontend && npm run format",
+    "test": "cd backend && cargo test && cd ../frontend && npm run test",
+    "test:coverage": "cd backend && cargo tarpaulin --out Html && cd ../frontend && npm run test:coverage",
+    "prepare": "husky",
+    "lint-staged": "lint-staged",
+    "lint:frontend": "cd frontend && npm run lint -- --fix",
+    "format:frontend": "cd frontend && npm run format"
+  },
+  "lint-staged": {
+    "frontend/**/*.{svelte,js,ts}": [
+      "npm run lint:frontend",
+      "npm run format:frontend"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QuentinGouttaya/devops-tp-quentin-gouttaya.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/QuentinGouttaya/devops-tp-quentin-gouttaya/issues"
+  },
+  "homepage": "https://github.com/QuentinGouttaya/devops-tp-quentin-gouttaya#readme",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8"
+  }
+}

@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Cargo et Rust
+target/
+**/*.rs.bk
+
+# Outils de développement
+.vscode/
+.idea/
+
+# Fichiers d'environnement
+.env
+.env.local
+
+# Fichiers Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Dossiers spécifiques à votre projet (à adapter)
+# Si vous avez un dossier data généré localement
+data/
+# Si vous stockez vos rapports Tarpaulin en local
+tarpaulin-report.html
